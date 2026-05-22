@@ -94,3 +94,15 @@ func TestInstantiate_UsesDefaultWhenNoValues(t *testing.T) {
 		t.Errorf("APP_ENV: got %q, want %q", snap.Env["APP_ENV"], "development")
 	}
 }
+
+func TestInstantiate_PreservesTools(t *testing.T) {
+	tmpl := makeTemplate()
+	snap := template.Instantiate(tmpl, nil)
+
+	if len(snap.Tools) != len(tmpl.Snapshot.Tools) {
+		t.Fatalf("tools count: got %d, want %d", len(snap.Tools), len(tmpl.Snapshot.Tools))
+	}
+	if snap.Tools[0].Name != "go" || snap.Tools[0].Version != "1.22.0" {
+		t.Errorf("tool: got %+v, want {Name:go Version:1.22.0}", snap.Tools[0])
+	}
+}
