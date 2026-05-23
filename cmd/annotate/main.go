@@ -37,9 +37,7 @@ func main() {
 			fmt.Println("no annotation found")
 			return
 		}
-		fmt.Printf("Author : %s\n", a.Author)
-		fmt.Printf("Note   : %s\n", a.Note)
-		fmt.Printf("Date   : %s\n", a.CreatedAt.Format("2006-01-02 15:04:05 UTC"))
+		printAnnotation(a)
 
 	case *clear:
 		if err := annotate.Clear(snap); err != nil {
@@ -67,6 +65,13 @@ func main() {
 		}
 		fmt.Println("annotation saved")
 	}
+}
+
+// printAnnotation formats and prints the fields of an annotation to stdout.
+func printAnnotation(a *annotate.Annotation) {
+	fmt.Printf("Author : %s\n", a.Author)
+	fmt.Printf("Note   : %s\n", a.Note)
+	fmt.Printf("Date   : %s\n", a.CreatedAt.Format("2006-01-02 15:04:05 UTC"))
 }
 
 func loadSnapshot(path string) (*snapshot.Snapshot, error) {
