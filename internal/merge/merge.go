@@ -2,6 +2,7 @@ package merge
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/stacksnap/internal/snapshot"
@@ -11,9 +12,9 @@ import (
 type Strategy string
 
 const (
-	StrategyBase    Strategy = "base"    // prefer base snapshot
+	StrategyBase    Strategy = "base"     // prefer base snapshot
 	StrategyIncoming Strategy = "incoming" // prefer incoming snapshot
-	StrategyNewest  Strategy = "newest"  // prefer the newer version string
+	StrategyNewest  Strategy = "newest"   // prefer the newer version string
 )
 
 // Result holds the merged snapshot and a log of any conflicts resolved.
@@ -59,10 +60,14 @@ func Merge(base, incoming snapshot.Snapshot, strategy Strategy) (Result, error) 
 		}
 	}
 
+	// Collect and sort tools by name for deterministic output.
 	merged := make([]snapshot.Tool, 0, len(toolIndex))
 	for _, t := range toolIndex {
 		merged = append(merged, t)
 	}
+	sort.Slice(merged, func(i, j int) bool {
+		return merged[i].Name < merged[j].Name
+	})
 
 	// Merge env: base wins on conflict, incoming adds new keys
 	env := make(map[string]string, len(base.Env))
